@@ -5,13 +5,14 @@ const User = require('../models/User.model')
 const jwt = require('jsonwebtoken')
 const { isAuthenticated } = require('./../middlewares/jwt.middleware')
 const saltRounds = 10
+const Cart = require('../models/Cart.model')
 
 
-//SIGNUP
-router.post('/signup', (req, res, next) => {
+//signup
+router.post('/signup', (req, res) => {
 
     const { email, password, username } = req.body
-
+    let user
     User
         .findOne({ email })
         .then((foundUser) => {
@@ -24,20 +25,18 @@ router.post('/signup', (req, res, next) => {
 
             User
                 .create({ email, password: hashedPassword, username })
-                .then((createdUser) => {
 
-                    const { email, username, _id, role } = createdUser
-                    const user = { email, username, _id, role }
-
-                    res.status(201).json({ user })
-
+                .then(newUser => {
+                    user = newUser
+                    return Cart.create({ user: newUser._id })
                 })
+                .then(newCartUser => res.status(200).json({ newCartUser, user }))
                 .catch(err => res.status(500).json({ errorMessage: err.message }))
         })
         .catch(err => res.status(500).json({ errorMessage: err.message }))
 })
 
-//LOGIN
+//login
 router.post('/login', (req, res) => {
     const { email, password } = req.body
 
@@ -73,7 +72,11 @@ router.post('/login', (req, res) => {
         .catch(err => res.status(500).json({ errorMessage: err.message }))
 })
 
+//verify
+router.get('/verify', isAuthenticated, (req, res) => {
 
+    res.status(200).json(req.payload)
 
+})
 
 module.exports = router
