@@ -3,12 +3,12 @@ const Product = require('../models/Product.model')
 const { isAuthenticated } = require('./../middlewares/jwt.middleware')
 
 //create new product
-router.post('/create', isAuthenticated, (req, res) => {
+router.post('/create', /* isAuthenticated, */(req, res) => {
 
-    const { name, description, price, images, category } = req.body
+    const { name, description, price, images, category, inStock } = req.body
 
     Product
-        .create(...req.body)
+        .create(req.body)
         .then(product => {
             res.status(200).json(product)
         })
@@ -40,22 +40,22 @@ router.get('/:product_id', (req, res) => {
 router.put('/:product_id/edit', (req, res) => {
 
     const { product_id } = req.params
-    const { name, description, price, images, category } = req.body
+    const { name, description, price, images, category, inStock } = req.body
 
     Product
-        .findByIdAndUpdate(product_id, { name, description, price, images, category })
+        .findByIdAndUpdate(product_id, { name, description, price, images, category, inStock }, { new: true })
         .then(product => res.status(200).json(product))
         .catch(err => res.status(500).json({ errorMessage: err.message }))
 })
 
-//delete car
+//delete product
 router.delete('/:product_id/delete', (req, res) => {
 
     const { product_id } = req.params
 
-    Car
+    Product
         .findByIdAndDelete(product_id)
-        .then(() => res.status(200).json())
+        .then(deleted => res.status(200).json(deleted))
         .catch(err => res.status(500).json({ errorMessage: err.message }))
 })
 

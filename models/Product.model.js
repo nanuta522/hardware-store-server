@@ -17,6 +17,9 @@ const productSchema = new Schema(
         }],
         category: {
             type: String,   
+        },
+        inStock: {
+            type: Number,
         }
     },
     {
