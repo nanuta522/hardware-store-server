@@ -13,6 +13,7 @@ router.post('/signup', (req, res) => {
 
     const { email, password, username } = req.body
     let user
+
     User
         .findOne({ email })
         .then((foundUser) => {
@@ -50,7 +51,7 @@ router.post('/login', (req, res) => {
         .then((foundUser) => {
             if (!foundUser) {
                 res.status(401).json({ message: "Usuario no encontrado." })
-                return;
+                return
             }
 
             if (bcrypt.compareSync(password, foundUser.password)) {
@@ -74,9 +75,7 @@ router.post('/login', (req, res) => {
 
 //verify
 router.get('/verify', isAuthenticated, (req, res) => {
-
     res.status(200).json(req.payload)
-
 })
 
 module.exports = router
