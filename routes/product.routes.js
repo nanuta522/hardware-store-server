@@ -3,7 +3,7 @@ const Product = require('../models/Product.model')
 const { isAuthenticated } = require('./../middlewares/jwt.middleware')
 
 //create new product
-router.post('/create', /* isAuthenticated, */(req, res) => {
+router.post('/create', isAuthenticated, (req, res) => {
 
     const { name, description, price, images, category, inStock } = req.body
 
