@@ -3,7 +3,7 @@ const Product = require('../models/Product.model')
 const { isAuthenticated } = require('./../middlewares/jwt.middleware')
 
 //create new product
-router.post('/create', /* isAuthenticated, */(req, res) => {
+router.post('/create', isAuthenticated,(req, res) => {
 
     const { name, description, price, images, category, inStock } = req.body
 
@@ -43,7 +43,7 @@ router.put('/:product_id/edit', (req, res) => {
     const { name, description, price, images, category, inStock } = req.body
 
     Product
-        .findByIdAndUpdate(product_id, { name, description, price, images, category, inStock }, { new: true })
+        .findByIdAndUpdate(product_id, req.body, { new: true })
         .then(product => res.status(200).json(product))
         .catch(err => res.status(500).json({ errorMessage: err.message }))
 })
