@@ -1,7 +1,6 @@
 const router = require('express').Router()
 const { isAuthenticated } = require('../middlewares/jwt.middleware')
 const Cart = require('../models/Cart.model')
-const User = require('../models/User.model')
 
 //render cart
 router.get('/', isAuthenticated, (req, res) => {
@@ -104,7 +103,3 @@ router.put('/:product_id/remove-item', isAuthenticated, (req, res) => {
         .then(cart => res.json(cart))
         .catch(err => res.status(500).json({ errorMessage: err.message }))
 })
-
-//
-
-
