@@ -17,7 +17,7 @@ router.get('/', isAuthenticated, (req, res) => {
 
 module.exports = router
 
-//add product to cart
+//test add product to cart
 /* router.put('/:product_id/add-item', isAuthenticated, (req, res) => {
 
     const { product_id } = req.params
@@ -51,7 +51,7 @@ module.exports = router
         .catch(err => res.status(500).json({ errorMessage: err.message }))
 }) */
 
-//test add item
+//add product to cart
 router.put('/:product_id/add-item', isAuthenticated, (req, res) => {
 
     const { product_id } = req.params
@@ -78,17 +78,33 @@ router.put('/:product_id/add-item', isAuthenticated, (req, res) => {
         .catch(err => res.status(500).json({ errorMessage: err.message }))
 })
 
-//delete one item
+//remove and delete a product 
 router.put('/:product_id/remove-item', isAuthenticated, (req, res) => {
 
     const { product_id } = req.params
     const { _id: user_id } = req.payload
 
     Cart
-        // .findOneAndUpdate({ user_id, 'items.product': product_id }, { $subtract: [{ $cond: [{ $gt: ['items.$.quantity', 1] }, 1, 6/* { $pull: { user_id, 'items.product': product_id } }, { new: true } */] }] }, { new: true })
-        .findOneAndUpdate({ user_id, 'items.product': product_id }, { $inc: { 'items.$.quantity': { $cond: { if: { $gt: ['items.$.quantity', 1] }, then: { 'items.$.quantity': -1 }, else: 6 } } } }, { new: true })
+        .findOne({ user_id })
+        .then(({ items }) => {
+            const greaterThan = items.some(item => {
+                if (item.product.equals(product_id) && item.quantity > 1) {
+                    return true
+                }
+            })
+            if (!greaterThan) {
+                return Cart
+                    .findOneAndUpdate({ user_id }, { $pull: { items: { product: product_id } } }, { new: true })
+            }
+            else {
+                return Cart
+                    .findOneAndUpdate({ user_id, 'items.product': product_id }, { $inc: { 'items.$.quantity': -1 } }, { new: true })
+            }
+        })
         .then(cart => res.json(cart))
         .catch(err => res.status(500).json({ errorMessage: err.message }))
 })
+
+//
 
 
