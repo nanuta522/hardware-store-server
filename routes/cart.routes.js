@@ -14,8 +14,6 @@ router.get('/', isAuthenticated, (req, res) => {
         .catch(err => res.status(500).json({ errorMessage: err.message }))
 })
 
-module.exports = router
-
 //test add product to cart
 /* router.put('/:product_id/add-item', isAuthenticated, (req, res) => {
 
@@ -103,3 +101,5 @@ router.put('/:product_id/remove-item', isAuthenticated, (req, res) => {
         .then(cart => res.json(cart))
         .catch(err => res.status(500).json({ errorMessage: err.message }))
 })
+
+module.exports = router
